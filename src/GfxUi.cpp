@@ -25,7 +25,7 @@ See more at http://blog.squix.ch
 #include "GfxUi.h"
 #include "common.h"
 
-GfxUi::GfxUi(TFT_eSPI *tft) {
+GfxUi::GfxUi(TFT_eSprite *tft) {
   _tft = tft;
 }
 

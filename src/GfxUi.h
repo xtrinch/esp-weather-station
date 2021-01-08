@@ -36,11 +36,11 @@ See more at http://blog.squix.ch
 
 class GfxUi {
   public:
-    GfxUi(TFT_eSPI * tft);
+    GfxUi(TFT_eSprite * tft);
     void drawBmp(const char * filename, uint16_t x, uint16_t y);
     
   private:
-    TFT_eSPI * _tft;
+    TFT_eSprite * _tft;
     uint16_t read16(fs::File &f);
     uint32_t read32(fs::File &f);
 

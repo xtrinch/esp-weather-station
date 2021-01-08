@@ -3,6 +3,8 @@
 unsigned long displaySampleMillis = 1000000; // something large, so we surely execute refresh the first time around
 
 TFT_eSPI tft = TFT_eSPI();
+TFT_eSprite sprite = TFT_eSprite(&tft);
+GfxUi ui = GfxUi(&sprite); // Jpeg and bmpDraw functions
 
 uint16_t width = 240;
 uint16_t height = 320;
@@ -16,10 +18,10 @@ void setup() {
   while (!setupWiFi());
 
   tft.begin();
+  sprite.setColorDepth(8);
+  sprite.createSprite(width, height);
   tft.fillRect(0, 0, width, height, TFT_BLACK);
 }
-
-GfxUi ui = GfxUi(&tft); // Jpeg and bmpDraw functions
 
 void loop() {
   if (millis() - displaySampleMillis <= CFG_DISPLAY_SAMPLE_INTERVAL) {
@@ -58,8 +60,8 @@ void loop() {
     return;
   }
 
-  // clear screen - TODO: check if we can bypass the screen blinking when refreshing with sprites
-  tft.fillRect(0, 0, width, height, TFT_BLACK);
+  // clear screen
+  sprite.fillRect(0, 0, width, height, TFT_BLACK);
 
   // current weather icon
   const char * weatherIcon =  jsonOpenWeather["weather"][0]["icon"];
@@ -71,43 +73,43 @@ void loop() {
   long int date = jsonOpenWeather["dt"];
   long int timezoneOffset = jsonOpenWeather["timezone"];
   const long int timezonedDate = date + timezoneOffset;
-  tft.loadFont(AA_FONT_SMALL);
-  tft.setTextColor(TFT_ORANGE, TFT_BLACK);
-  tft.drawString(asctime(gmtime(&timezonedDate)), edgeOffset + 25, edgeOffset);
+  sprite.loadFont(AA_FONT_SMALL);
+  sprite.setTextColor(TFT_ORANGE, TFT_BLACK);
+  sprite.drawString(asctime(gmtime(&timezonedDate)), edgeOffset + 25, edgeOffset);
 
   // current temperature
   ui.drawBmp("/icon/icon-temperature.bmp", 123, 40);
-  tft.setTextColor(TFT_WHITE, TFT_BLACK);
+  sprite.setTextColor(TFT_WHITE, TFT_BLACK);
   double temperatureKelvin = jsonOpenWeather["main"]["temp"];
   temperatureKelvin -= 273.15;
   int temperatureCelcius = (int)round(temperatureKelvin);
   char temperature [10];
   snprintf(temperature, 10, "%*d", 2, temperatureCelcius);
-  tft.loadFont(AA_FONT_LARGE);
-  tft.drawString(temperature, 153, 40);
-  tft.loadFont(AA_FONT_SMALL);
-  tft.drawString("C\n", 198, 40);
+  sprite.loadFont(AA_FONT_LARGE);
+  sprite.drawString(temperature, 153, 40);
+  sprite.loadFont(AA_FONT_SMALL);
+  sprite.drawString("C\n", 198, 40);
 
   // temperature real feel
-  tft.loadFont(AA_FONT_SMALL);
-  tft.setTextColor(TFT_ORANGE, TFT_BLACK);
-  tft.drawString("Real feel:", 130, 80);
-  tft.setTextColor(TFT_WHITE, TFT_BLACK);
+  sprite.loadFont(AA_FONT_SMALL);
+  sprite.setTextColor(TFT_ORANGE, TFT_BLACK);
+  sprite.drawString("Real feel:", 130, 80);
+  sprite.setTextColor(TFT_WHITE, TFT_BLACK);
   double feelsLikeKelvin = jsonOpenWeather["main"]["feels_like"];
   feelsLikeKelvin -= 273.15;
   int feelsLikeCelcius = (int)round(feelsLikeKelvin);
   char feelsLike [10];
   snprintf(feelsLike, 10, "%*d C", 2, feelsLikeCelcius);
-  tft.drawString(feelsLike, 130, 100);
+  sprite.drawString(feelsLike, 130, 100);
 
   // current wind speed
   int windSpeed = (int)round(jsonOpenWeather["wind"]["speed"]);
   char weatherText [10];
   snprintf(weatherText, 10, "%*d", 2, windSpeed);
-  tft.loadFont(AA_FONT_LARGE);
-  tft.drawString(weatherText, edgeOffset + (width / 4) + 30, 135);
-  tft.loadFont(AA_FONT_SMALL);
-  tft.drawString("m/s", edgeOffset + (width / 4) + 75, 135);
+  sprite.loadFont(AA_FONT_LARGE);
+  sprite.drawString(weatherText, edgeOffset + (width / 4) + 30, 135);
+  sprite.loadFont(AA_FONT_SMALL);
+  sprite.drawString("m/s", edgeOffset + (width / 4) + 75, 135);
 
   // wind direction
   int windDeg = jsonOpenWeather["wind"]["deg"];
@@ -119,35 +121,35 @@ void loop() {
   ui.drawBmp(windIconName, (width / 4), 135);
 
   // current humidity %
-  tft.loadFont(AA_FONT_LARGE);
-  tft.setTextColor(TFT_WHITE, TFT_BLACK);
+  sprite.loadFont(AA_FONT_LARGE);
+  sprite.setTextColor(TFT_WHITE, TFT_BLACK);
   int humidity = jsonOpenWeather["main"]["humidity"];
   char humidityText [3];
   snprintf(humidityText, 3, "%d", humidity);
-  tft.drawString(humidityText, edgeOffset + 30, 185);
-  tft.loadFont(AA_FONT_SMALL);
-  tft.drawString("%", edgeOffset + 75, 185);
+  sprite.drawString(humidityText, edgeOffset + 30, 185);
+  sprite.loadFont(AA_FONT_SMALL);
+  sprite.drawString("%", edgeOffset + 75, 185);
   ui.drawBmp( "/icon/icon-humidity.bmp", edgeOffset, 185);
 
   // current cloud %
-  tft.loadFont(AA_FONT_LARGE);
-  tft.setTextColor(TFT_WHITE, TFT_BLACK);
+  sprite.loadFont(AA_FONT_LARGE);
+  sprite.setTextColor(TFT_WHITE, TFT_BLACK);
   int clouds = jsonOpenWeather["clouds"]["all"];
   char cloudsText [3];
   snprintf(cloudsText, 3, "%d", clouds);
-  tft.drawString(cloudsText, (width / 2) + edgeOffset + 30, 185);
-  tft.loadFont(AA_FONT_SMALL);
-  tft.drawString("%", (width / 2) + edgeOffset + 75, 185);
+  sprite.drawString(cloudsText, (width / 2) + edgeOffset + 30, 185);
+  sprite.loadFont(AA_FONT_SMALL);
+  sprite.drawString("%", (width / 2) + edgeOffset + 75, 185);
   ui.drawBmp( "/icon/icon-clouds.bmp", (width / 2), 185);
 
   // draw line between openweather and iotfreezer
-  tft.drawRect(0, 235, width, 1, TFT_LIGHTGREY);
+  sprite.drawRect(0, 235, width, 1, TFT_LIGHTGREY);
 
   // draw iot freezer
   //serializeJsonPretty(json, Serial);
   JsonObject documentRoot = jsonIotFreezer.as<JsonObject>();
 
-  tft.loadFont(AA_FONT_SMALL);
+  sprite.loadFont(AA_FONT_SMALL);
 
   for (JsonPair keyValue : documentRoot) {
     JsonObject measurementRoot = keyValue.value();
@@ -159,7 +161,7 @@ void loop() {
 
     char name [50];
     snprintf(name, 50, "%s - %s", displayName, location);
-    tft.drawString(name, edgeOffset, 250);
+    sprite.drawString(name, edgeOffset, 250);
 
     int idx = 0;
     for (JsonPair measurementKeyValue : measurements) {
@@ -170,13 +172,13 @@ void loop() {
       // measurement unit; e.g. C
       const char * measurementUnit = measurementKeyValue.value()["measurementTypeUnit"];
 
-      tft.setTextColor(TFT_WHITE, TFT_BLACK);
+      sprite.setTextColor(TFT_WHITE, TFT_BLACK);
 
-      tft.loadFont(AA_FONT_LARGE);
-      tft.drawString(measurementStr, edgeOffset + idx*120 + 30, 280);
+      sprite.loadFont(AA_FONT_LARGE);
+      sprite.drawString(measurementStr, edgeOffset + idx*120 + 30, 280);
 
-      tft.loadFont(AA_FONT_SMALL);
-      tft.drawString(measurementUnit, edgeOffset + idx*120 + 75, 280);
+      sprite.loadFont(AA_FONT_SMALL);
+      sprite.drawString(measurementUnit, edgeOffset + idx*120 + 75, 280);
 
       // current weather icon
       char iconName [30];
@@ -186,4 +188,6 @@ void loop() {
       idx += 1;
     }
   }
+
+  sprite.pushSprite(0, 0);
 }
