@@ -10,6 +10,13 @@ Heavily inspired by https://github.com/Bodmer/OpenWeather. Built with platformIO
 
 ![Image](https://github.com/xtrinch/esp-weather-station/blob/master/images/image.jpg)
 
+## Components and prerequisites
+
+- ESP32 or ESP8266
+- TFT screen
+- An account on OpenWeatherMap, to get the API key
+- An account on IotFreezer and some sensor data uploaded to it
+
 ## Usage
 
 Make sure to clone with `git clone --recursive REPO-URL` to make sure `ESP-make-easy` submodule is cloned along.
