@@ -20,3 +20,12 @@ Make sure you upload the `/data` folder where the images and fonts reside to the
 
 To generate a BMP that works with this lib, use image magick:
 `magick convert *.bmp -background black -alpha remove -compress none -depth 24 %d.bmp`
+
+## Steps that follow
+
+I also did some manual soldering work and 3d printed a case for it (slides into a wall mount, so you can easily flash and upgrade it):
+
+![Image](https://github.com/xtrinch/esp-weather-station/blob/master/images/weatherstation.jpg)
+
+The repository can be found at https://github.com/xtrinch/parametric-display-casing. It's parametric, so you just measure the actual dimensions of your finished soldered product and enter them into the FreeCAD spreadsheet and print it.
+
