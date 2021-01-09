@@ -10,6 +10,8 @@ Heavily inspired by https://github.com/Bodmer/OpenWeather. Built with platformIO
 
 ![Image](https://github.com/xtrinch/esp-weather-station/blob/master/images/image.jpg)
 
+The data above the line is from OpenWeatherMap, below the line is IotFreezer.
+
 ## Components and prerequisites
 
 - ESP32 or ESP8266
@@ -25,7 +27,7 @@ Before flashing, copy `import_env.example.py` to `import_env.py` and fill in you
 
 Make sure you upload the `/data` folder where the images and fonts reside to the ESP before flashing. You can do that with `pio run --target uploadfs` or just use the platformio addon for vscode and click on `Upload Filesystem Image`.
 
-To generate a BMP that works with this lib, use image magick:
+To generate a BMP that works with this repo, use image magick:
 `magick convert *.bmp -background black -alpha remove -compress none -depth 24 %d.bmp`
 
 ## Steps that follow
