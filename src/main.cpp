@@ -29,15 +29,15 @@ void loop() {
   }
   displaySampleMillis = millis();
 
-  // make iot freezer query
-  char responseIotFreezer[800]; // 648 
-  makeSecureNetworkRequest("https://iotfreezer.com/api/measurements/display", CFG_ACCESS_TOKEN, "", responseIotFreezer, "GET");
-
   // make open weather query
   char responseOpenWeather[800]; // 648 
   char url[250];
   snprintf(url, 250, "http://api.openweathermap.org/data/2.5/weather?q=%s&APPID=%s", CFG_OPENWEATHERMAP_LOCATION, CFG_OPENWEATHERMAP_APPID);
   makeNetworkRequest(url, "", "", responseOpenWeather, "GET");
+
+  // make iot freezer query
+  char responseIotFreezer[800]; // 648 
+  makeSecureNetworkRequest("https://iotfreezer.com/api/measurements/display", CFG_ACCESS_TOKEN, "", responseIotFreezer, "GET");
 
   // deserialize open weather map
   DynamicJsonDocument jsonOpenWeather(1024);
@@ -51,14 +51,6 @@ void loop() {
   filter["wind"] = true;
   filter["clouds"]["all"] = true;
   deserializeJson(jsonOpenWeather, responseOpenWeather, DeserializationOption::Filter(filter));
-  
-  // deserialize iot freezer
-  DynamicJsonDocument jsonIotFreezer(1024);
-  DeserializationError error = deserializeJson(jsonIotFreezer, responseIotFreezer);
-  if (error) {
-    ardprintf(error.c_str());
-    return;
-  }
 
   // clear screen
   sprite.fillRect(0, 0, width, height, TFT_BLACK);
@@ -144,6 +136,15 @@ void loop() {
 
   // draw line between openweather and iotfreezer
   sprite.drawRect(0, 235, width, 1, TFT_LIGHTGREY);
+
+  // deserialize iot freezer
+  DynamicJsonDocument jsonIotFreezer(1024);
+  DeserializationError error = deserializeJson(jsonIotFreezer, responseIotFreezer);
+  if (error) {
+    ardprintf(error.c_str());
+    sprite.pushSprite(0, 0);
+    return;
+  }
 
   // draw iot freezer
   //serializeJsonPretty(json, Serial);
