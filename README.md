@@ -21,8 +21,6 @@ The data above the line is from OpenWeatherMap, below the line is IotFreezer.
 
 ## Usage
 
-Make sure to clone with `git clone --recursive REPO-URL` to make sure `ESP-make-easy` submodule is cloned along.
-
 Before flashing, copy `import_env.example.py` to `import_env.py` and fill in your own configuration.
 
 Make sure you upload the `/data` folder where the images and fonts reside to the ESP before flashing. You can do that with `pio run --target uploadfs` or just use the platformio addon for vscode and click on `Upload Filesystem Image`.
